@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Sensitive data
-credentials/
+#credentials/
