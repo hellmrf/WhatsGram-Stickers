@@ -1,0 +1,4 @@
+python-magic>=0.4.18
+pillow>=7.2.0
+cryptography>=2.9.2
+selenium>=3.141.0
