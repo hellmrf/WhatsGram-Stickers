@@ -1,7 +1,22 @@
-# from WhatsGramSticker import WhatsGramSticker
-import os, re
+import os
+import re
+from io import BytesIO
+import base64
+from PIL import Image
 from time import sleep
 from webwhatsapi import WhatsAPIDriver
+
+
+def convert_sticker_to_png_base64(sticker: BytesIO):
+    file = BytesIO()
+    img = Image.open(sticker)
+    img.save(file, 'png')
+
+    base64_content = base64.b64encode(file.getvalue()).decode()
+    base64_string = 'data:image/png;base64,' + base64_content
+
+    return base64_string
+
 
 chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
 profile_path = os.path.join(os.path.dirname(__file__), "chromeprofile")
@@ -15,15 +30,19 @@ print(driver.get_all_chats())
 def response(msg: str):
     if re.search(r'(oi|ola|olá|hi|hello)', msg, re.IGNORECASE):
         return "Olá!! Tudo bem?"
-    elif 'te amo' in msg:
+    elif 'te amo' in msg.lower():
         return "Eu também amo você!"
-    elif 'fofinho' in msg:
+    elif 'fofinho' in msg.lower():
         return "Você também é muito fofx!"
-    elif 'tchau' in msg:
+    elif 'tchau' in msg.lower():
         return "Que pena que você já vai :(. Tchauzinho. Bom conversar com você."
     else:
         return "Ehr... Bruh... Pi pi pi... Ainda não aprendi o que você disse..."
 
+
+# def temp_save_to_txt(base64):
+#     with open("/home/helitonmrf/Projects/WhatsGram_Stickers/test/sticker.html", 'w') as fl:
+#         fl.write(f"<img src='{base64}' />")
 
 while True:
     unread = driver.get_unread()
@@ -43,11 +62,12 @@ while True:
                 print(f'[  Media Key]: {message.media_key}')
                 print(f'[ Client URL]: {message.client_url}')
                 print(f'[   Filename]: {message.filename}')
-                message.save_media(os.path.dirname(__file__), True)
+                # message.save_media(os.path.dirname(__file__), True)
+                sticker = message.save_media_buffer(True)
+                image_base64 = convert_sticker_to_png_base64(sticker)
+                temp_save_to_txt(image_base64)
             print(f'Chat id: {message.chat_id}')
             print("--------------------------------------------------------------")
-
-
     sleep(5)
 
 
