@@ -4,19 +4,24 @@ from io import BytesIO
 import base64
 from PIL import Image
 from time import sleep
-from webwhatsapi import WhatsAPIDriver
+
+from whatsgramstickers.webwhatsapi import WhatsAPIDriver
+from whatsgramstickers.BotActions import BotActions
 
 
 class WhatsGramSticker:
-    def __init__(self):
+
+    def __init__(self, start=True):
         self._chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
         self._profile_path = os.path.join(os.path.dirname(__file__), "chromeprofile")
         self._headless = False
-        self._driver = WhatsAPIDriver(username="API", client="chrome", profile=self._profile_path, executable_path=self._chromedriver)
+        self._driver = WhatsAPIDriver(username="API", client="chrome", profile=self._profile_path,
+                                      executable_path=self._chromedriver)
+        self._bot_actions = BotActions(self._driver)
 
-        print(self._driver.get_all_chats())
-
-        self.listen_messages()
+        # print(self._driver.get_all_chats())
+        if start:
+            self.listen_messages()
 
     def listen_messages(self) -> None:
         """
@@ -45,7 +50,8 @@ class WhatsGramSticker:
                 print(f"{message.type} from {message.sender}.")
                 if message.type == 'chat':
                     print(f"[{message.timestamp}]: {message.content}")
-                    self._driver.send_message_to_id(message.chat_id, self.temp_response(message.content))
+                    self._driver.send_message_to_id(message.chat_id,
+                                                    self.treat_message(message.chat_id, message.content))
                 elif message.type == 'sticker':
                     print(f'[       Size]: {message.size}')
                     print(f'[       MIME]: {message.mime}')
@@ -59,10 +65,17 @@ class WhatsGramSticker:
                 print(f'Chat id: {message.chat_id}')
                 print("--------------------------------------------------------------")
 
+    def treat_message(self, chat_id: str, message: str) -> str:
+        message_lower = message.lower()
+        if '/start' in message_lower:
+            return self._bot_actions.start(chat_id)
+        else:
+            return self._bot_actions.welcome()
+
     @staticmethod
     def convert_sticker_to_png_base64(sticker: BytesIO) -> str:
         """
-        Converts a stiker file (webp) to base64 string (png)
+        Converts a sticker file (webp) to base64 string (png)
         :param sticker: the sticker to be converted
         :return: the base64 string
         """
