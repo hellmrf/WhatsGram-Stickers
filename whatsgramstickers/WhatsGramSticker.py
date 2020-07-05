@@ -1,25 +1,95 @@
 import os
-import logging
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+import re
+from io import BytesIO
+import base64
+from PIL import Image
+from time import sleep
+from webwhatsapi import WhatsAPIDriver
 
 
 class WhatsGramSticker:
     def __init__(self):
-        # Configuration
         self._chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
         self._profile_path = os.path.join(os.path.dirname(__file__), "chromeprofile")
         self._headless = False
-        
-        # Starting webdriver
-        self._profile = webdriver.ChromeOptions()
-        self._profile.add_argument("user-data-dir=%s" % self._profile_path)
-        if self._headless:
-            self._profile.add_argument("headless")
-        self.driver = webdriver.Chrome(self._chromedriver, chrome_options=self._profile)
-        self.driver.get("https://web.whatsapp.com")
+        self._driver = WhatsAPIDriver(username="API", client="chrome", profile=self._profile_path, executable_path=self._chromedriver)
+
+        print(self._driver.get_all_chats())
+
+        self.listen_messages()
+
+    def listen_messages(self) -> None:
+        """
+        Keeps listening for new messages.
+        :return:
+        """
+        while True:
+            try:
+                self.check_for_unread_messages()
+                sleep(5)
+            except TypeError:
+                print("------------------------")
+                print("---ERROR...RESTARTING---")
+                print("------------------------")
+
+    def check_for_unread_messages(self) -> None:
+        """
+        Check for unread messages and call actions
+        :return:
+        """
+        unread = self._driver.get_unread()
+        for msg_group in unread:
+            print(f'Message from <{msg_group.chat.id}>.')
+            for message in msg_group.messages:
+                print("--------------------------------------------------------------")
+                print(f"{message.type} from {message.sender}.")
+                if message.type == 'chat':
+                    print(f"[{message.timestamp}]: {message.content}")
+                    self._driver.send_message_to_id(message.chat_id, self.temp_response(message.content))
+                elif message.type == 'sticker':
+                    print(f'[       Size]: {message.size}')
+                    print(f'[       MIME]: {message.mime}')
+                    print(f'[    Caption]: {message.caption}')
+                    print(f'[  Media Key]: {message.media_key}')
+                    print(f'[ Client URL]: {message.client_url}')
+                    print(f'[   Filename]: {message.filename}')
+                    sticker = message.save_media_buffer(True)
+                    image_base64 = self.convert_sticker_to_png_base64(sticker)
+                    self.temp_save_to_txt(image_base64)
+                print(f'Chat id: {message.chat_id}')
+                print("--------------------------------------------------------------")
+
+    @staticmethod
+    def convert_sticker_to_png_base64(sticker: BytesIO) -> str:
+        """
+        Converts a stiker file (webp) to base64 string (png)
+        :param sticker: the sticker to be converted
+        :return: the base64 string
+        """
+        file = BytesIO()
+        img = Image.open(sticker)
+        img.save(file, 'png')
+
+        base64_content = base64.b64encode(file.getvalue()).decode()
+        base64_string = 'data:image/png;base64,' + base64_content
+        return base64_string
+
+    # TODO: remove that
+    @staticmethod
+    def temp_response(msg: str) -> str:
+        if re.search(r'(oi|ola|olá|hi|hello)', msg, re.IGNORECASE):
+            return "Olá!! Tudo bem?"
+        elif 'te amo' in msg.lower():
+            return "Eu também amo você!"
+        elif 'fofinho' in msg.lower():
+            return "Você também é muito fofx!"
+        elif 'tchau' in msg.lower():
+            return "Que pena que você já vai :(. Tchauzinho. Bom conversar com você."
+        else:
+            return "Ehr... Bruh... Pi pi pi... Ainda não aprendi o que você disse..."
+
+    # TODO: remove that
+    @staticmethod
+    def temp_save_to_txt(base64_string: str) -> None:
+        with open("/home/helitonmrf/Projects/WhatsGram_Stickers/test/sticker.html", 'w') as fl:
+            fl.write(f"<img src='{base64_string}' />")
