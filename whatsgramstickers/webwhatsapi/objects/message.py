@@ -106,6 +106,10 @@ class MediaMessage(Message):
             f.write(ioobj.getvalue())
         return filename
 
+    def save_media_buffer(self, force_download=False):
+        # gets full media
+        return self.driver.download_media(self, force_download)
+
     def __repr__(self):
         return "<MediaMessage - {type} from {sender} at {timestamp} ({filename})>".format(
             type=self.type,

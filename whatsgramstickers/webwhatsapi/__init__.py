@@ -683,6 +683,18 @@ class WhatsAPIDriver(object):
         filename = os.path.split(path)[-1]
         return self.wapi_functions.sendImage(imgBase64, chatid, filename, caption)
 
+    def send_media(self, image_base64: str, chatid, caption):
+        """
+            sends a base64 file using the sendImage function of wapi.js
+        :param path: file path
+        :param chatid: chatId to be sent
+        :param caption:
+        :return:
+        """
+        imgBase64 = self.convert_to_base64(path)
+        filename = os.path.split(path)[-1]
+        return self.wapi_functions.sendImage(imgBase64, chatid, filename, caption)
+
     def send_message_with_thumbnail(self, path, chatid, url, title, description, text):
         """
             converts the file to base64 and sends it using the sendImage function of wapi.js
