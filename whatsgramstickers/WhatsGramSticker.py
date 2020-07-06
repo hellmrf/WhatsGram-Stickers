@@ -66,11 +66,7 @@ class WhatsGramSticker:
                 print("--------------------------------------------------------------")
 
     def treat_message(self, chat_id: str, message: str) -> str:
-        message_lower = message.lower()
-        if '/start' in message_lower:
-            return self._bot_actions.start(chat_id)
-        else:
-            return self._bot_actions.welcome()
+        return self._bot_actions.answer(chat_id, message)
 
     @staticmethod
     def convert_sticker_to_png_base64(sticker: BytesIO) -> str:
