@@ -1,4 +1,11 @@
 from whatsgramstickers.WhatsGramSticker import WhatsGramSticker
+# from whatsgramstickers.User import User
+#
+# # user = User("test")
+# # user.set_stage(6)
+#
+# print(User.find_users_in_last_stage())
+
 
 WGS = WhatsGramSticker()
 

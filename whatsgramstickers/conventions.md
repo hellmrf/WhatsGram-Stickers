@@ -26,6 +26,14 @@ Users always have a stage that indicates what the bot has to do with incoming me
 
   Bot will read emojis and start the process. If ok, send confirmation and tell user how to get stickers on Telegram. Sets `stage` back to `0`.
 
+* [5] Get Telegram ID
+
+  Bot will guide user to send a message to the Telegram Bot.
+  
+* [6] Generate Stickers
+
+  User are ready to get the Pack. Bot will read all Whatsapp unread messages, catch all stickers and generate a new pack. 
+
 ## Bot Messages
 
 Here are all planned conversation.

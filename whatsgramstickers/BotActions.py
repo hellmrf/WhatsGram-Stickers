@@ -26,4 +26,8 @@ class BotActions:
 
     def start(self, chat_id: str) -> str:
         self._driver.chat_send_seen(chat_id)
-        return self.BOT_MESSAGES['start'] + f"\n\nAgora eu devo salvar seu id <{chat_id}> para mais tarde."
+        return self.BOT_MESSAGES['start']
+
+    def _clean_user(self, chat_id: str) -> bool:
+        pass
+

@@ -5,6 +5,7 @@ CREATE TABLE users
     package_name character varying(64),
     stage smallint,
     package_title character varying(64),
+    telegram_id integer,
     PRIMARY KEY (id),
     UNIQUE (chat_id)
 );
