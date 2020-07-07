@@ -93,5 +93,5 @@ class User:
     def clean_user(chat_id: str) -> bool:
         with DB() as db:
             db.cursor.execute("UPDATE users SET stage = 0, package_name = NULL, package_title = NULL WHERE chat_id = "
-                              "%s LIMIT 1", (chat_id,))
-            return db.cursor.fetchone() is not None
+                              "%s", (chat_id,))
+            return db.cursor.rowcount > 0
