@@ -58,9 +58,8 @@ class WhatsappBot:
     def create_sticker_pack(self, user_info: tuple) -> bool:
         """Create a sticker pack using StickerSet class."""
         wa_chat_id = user_info[0]
-        package_name = user_info[1]
-        package_title = user_info[2]
-        tg_chat_id = user_info[3]
+        package_title = user_info[1]
+        tg_chat_id = user_info[2]
 
         # Get stickers messages
         stickers = self.list_user_unread_stickers(wa_chat_id)
@@ -74,14 +73,17 @@ class WhatsappBot:
 
         # Create sticker set
         sticker_set = StickerSet(tg_chat_id)
-        sticker_set.create_new_sticker_set(package_name, package_title, uploaded_stickers[0])
+        name = sticker_set.create_new_sticker_set(package_title, uploaded_stickers[0])
+
+        if not name:
+            return False
 
         # Populate sticker set
         for uploaded_sticker in uploaded_stickers[1:]:
-            print(sticker_set.add_sticker_to_set(tg_chat_id, package_name, uploaded_sticker))
+            print(sticker_set.add_sticker_to_set(tg_chat_id, name, uploaded_sticker))
 
         # Send confirmation
-        self._bot_actions.confirmation(wa_chat_id, package_name)
+        self._bot_actions.confirmation(wa_chat_id, name)
         return True
 
     def check_for_unread_messages(self) -> None:
@@ -102,7 +104,6 @@ class WhatsappBot:
             self.treat_message(message.chat_id, message.content)
         elif User.get_stage(message.chat_id) == 0:
             self.treat_message(message.chat_id, "a")
-
 
     def list_user_unread_stickers(self, chat_id: str) -> List[Message]:
         messages: List[Message] = self._driver.get_all_messages_in_chat(chat_id)

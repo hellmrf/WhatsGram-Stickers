@@ -1,8 +1,5 @@
-from time import sleep
-
 from whatsgramstickers.TelegramBot import TelegramBot
 from whatsgramstickers.WhatsappBot import WhatsappBot
-from whatsgramstickers.BotActions import BotActions
 
 
 class WhatsGramSticker:

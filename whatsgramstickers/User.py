@@ -27,8 +27,13 @@ class User:
                 db.cursor.execute("INSERT INTO users (chat_id, stage) VALUES (%s, %s)", (self.chat_id, new_stage, ))
                 return db.cursor.rowcount > 0
 
-    def set_package_name(self, new_package_name: str) -> bool:
-        return self._update_field('package_name', new_package_name)
+    def REMOVED_set_package_name(self, new_package_name: str) -> bool:
+        """
+        This function MAY NOT be used.
+        The name have to be generated with StickerSet.generate_package_name_by_title() instead.
+        """
+        # return self._update_field('package_name', new_package_name)
+        return False
 
     def set_package_title(self, new_package_title: str) -> bool:
         return self._update_field('package_title', new_package_title)
@@ -86,10 +91,9 @@ class User:
     @staticmethod
     def find_users_in_last_stage() -> list:
         with DB() as db:
-            db.cursor.execute("SELECT chat_id, package_name, package_title, telegram_id FROM users "
+            db.cursor.execute("SELECT chat_id, package_title, telegram_id FROM users "
                               "WHERE stage = 6 "
                               "AND package_title != '' "
-                              "AND package_name  != '' "
                               "AND telegram_id != 0")
             return list(db.cursor.fetchall())
 
