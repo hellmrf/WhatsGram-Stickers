@@ -1,3 +1,4 @@
+import logging
 from whatsgramstickers.webwhatsapi import WhatsAPIDriver
 from whatsgramstickers.db import DB
 from whatsgramstickers.User import User
@@ -27,9 +28,9 @@ class BotActions:
         elif '/done' in message_lower and stage == STAGES['WAITING_STICKERS']:
             user.set_stage(STAGES['WAITING_FOR_TELEGRAM'])
             return self.ask_for_telegram(chat_id)
-        elif stage == 1:
+        elif stage == STAGES['WAITING_PACKAGE_TITLE']:
             return self.read_package_title(chat_id, message)
-        elif stage == 2:
+        elif stage == STAGES['REMOVED_WAITING_PACKAGE_NAME']:
             user.set_stage(STAGES['WAITING_STICKERS'])
             return True
             # return self.read_package_name(chat_id, message)
@@ -40,6 +41,8 @@ class BotActions:
         # TODO read package title
         title = message.strip()
         if not StickerSet.validate_set_title(title):
+            logging.warning(f"BotActions.read_package_title(): {title} rejected.")
+            self._send_message(chat_id, self.BOT_MESSAGES['invalid_package_title'])
             return False
         user = User(chat_id)
         user.set_stage(STAGES['WAITING_STICKERS'])

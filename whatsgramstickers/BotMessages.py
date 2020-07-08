@@ -6,7 +6,8 @@ WHATSAPP_MESSAGES = {
   "send_me_stickers": "Ok, vamos à parte divertida.\n\nMe envie todas as figurinhas (no mínimo 3, no máximo 120) que você quer adicionar ao pacote. \n\nEu vou ficar esperando. Quando terminar, me avise enviando um ```/done```.",
   "whats_your_telegram": "Legal! Vamos criar um pacote seu. Pra criar seu pacote, você precisa encontrar meu irmão no Telegram. O nome dele é @WhatsGramStickerBot (http://t.me/WhatsGramStickersBot).\n\nQuando encontrá-lo, clique em Começar. Ele vai te dizer pra enviar uma mensagem no WhatsApp, mas você já fez isso. \n\nSó copie o código na mensagem a seguir e envie para ele.\n\nQuando você fizer isso, ele vai me informar e eu já vou criar seu pacote e te enviar o link por aqui, ok?",
   "done": "Yupi! Seu pacote de figurinhas está saindo do forno!!! Acesse http://t.me/addstickers/{} para encontrá-lo!\n\nSe quiser gerenciá-lo, você pode encontrar o bot @Stickers no Telegram. Ele pode te ajudar a ver e editar seus pacotes!\n\nSe quiser criar mais pacotes, já sabe: envia um ```/start```",
-  "unknown_error": "Ops... Encontrei um erro que não consigo resolver sozinho. Como as coisas na computação nem sempre seguem a lógica, tente enviar um ```/start``` novamente dentro de alguns minutos. Se isso não funcionar, entre em contato com meu pai humano no Telegram @helitonmrf (https://t.me/helitonmrf). "
+  "unknown_error": "Ops... Encontrei um erro que não consigo resolver sozinho. Como as coisas na computação nem sempre seguem a lógica, tente enviar um ```/start``` novamente dentro de alguns minutos. Se isso não funcionar, entre em contato com meu pai humano no Telegram @helitonmrf (https://t.me/helitonmrf). ",
+  "invalid_package_title": "Opa, esse nome para o pacote não é válido. Use no máximo 40 caracteres.",
 }
 
 TELEGRAM_MESSAGES = {
