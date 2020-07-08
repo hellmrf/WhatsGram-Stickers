@@ -86,7 +86,11 @@ class User:
     @staticmethod
     def find_users_in_last_stage() -> list:
         with DB() as db:
-            db.cursor.execute("SELECT * FROM users WHERE stage = 6")
+            db.cursor.execute("SELECT chat_id, package_name, package_title, telegram_id FROM users "
+                              "WHERE stage = 6 "
+                              "AND package_title != '' "
+                              "AND package_name  != '' "
+                              "AND telegram_id != 0")
             return list(db.cursor.fetchall())
 
     @staticmethod

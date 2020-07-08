@@ -6,3 +6,4 @@ six>=1.15.0
 typing>=3.7.4.1
 numpy>=1.19.0
 python-telegram-bot>=12.8
+requests>=2.24.0

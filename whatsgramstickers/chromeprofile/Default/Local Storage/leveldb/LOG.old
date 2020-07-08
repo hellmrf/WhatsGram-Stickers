@@ -1,3 +1,7 @@
-2020/07/07-01:33:31.947 8e60 Reusing MANIFEST /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/Local Storage/leveldb/MANIFEST-000001
-2020/07/07-01:33:31.947 8e60 Recovering log #4
-2020/07/07-01:33:31.948 8e60 Reusing old log /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/Local Storage/leveldb/000004.log 
+2020/07/08-01:27:51.808 1dbf1 Reusing MANIFEST /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/Local Storage/leveldb/MANIFEST-000001
+2020/07/08-01:27:51.810 1dbf1 Recovering log #4
+2020/07/08-01:27:51.830 1dbf1 Level-0 table #6: started
+2020/07/08-01:27:51.876 1dbf1 Level-0 table #6: 22056 bytes OK
+2020/07/08-01:27:51.876 1dbf1 Recovering log #6
+2020/07/08-01:27:51.881 1dbf1 Reusing old log /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/Local Storage/leveldb/000006.log 
+2020/07/08-01:27:51.925 1dbf1 Delete type=0 #4

@@ -11,8 +11,10 @@ class WhatsGramSticker:
         if run_telegram:
             self._telegram = TelegramBot()
         if run_whatsapp:
-            self._whatsapp = WhatsappBot(auto_run=False)
-            while True:
+            self._whatsapp = WhatsappBot(auto_run=False, auto_long_run=False)
+            self._whatsapp.keep_running()
+
+            """while True:
                 try:
                     self._whatsapp.run()
                     sleep(5)
@@ -20,4 +22,4 @@ class WhatsGramSticker:
                     print("------------------------")
                     print("---ERROR...RESTARTING---")
                     print("------------------------")
-
+            """

@@ -1,19 +1,21 @@
 import os
-import re
 from io import BytesIO
 import base64
 from PIL import Image
 from time import sleep
+from typing import List
+import logging
 
 from whatsgramstickers.webwhatsapi import WhatsAPIDriver
 from whatsgramstickers.webwhatsapi.objects.message import Message
 from whatsgramstickers.BotActions import BotActions
+from whatsgramstickers.StickerSet import StickerSet
 from whatsgramstickers.User import User
 
 
 class WhatsappBot:
 
-    def __init__(self, auto_run=False):
+    def __init__(self, auto_run=False, auto_long_run=False):
         self._chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
         self._profile_path = os.path.join(os.path.dirname(__file__), "chromeprofile")
         self._headless = False
@@ -21,39 +23,66 @@ class WhatsappBot:
                                       executable_path=self._chromedriver)
         self._bot_actions = BotActions(self._driver)
 
-        if auto_run:
+        if auto_long_run:
+            self.keep_running()
+        elif auto_run:
             self.run()
 
-    def run(self, long_run=False) -> None:
+    def run(self) -> None:
         """
         • Check if there's some user with status == 6 (if yes, generate sticker pack)
         • Listen to new messages
             Here we can either keep listening to new messages (long_run == True) or check just once.
         """
 
-        # Check for users waiting the pack
-        if User.find_users_in_last_stage():
-            pass
-
         # Check for new messages
-        if long_run:
-            self.listen_messages()
-        else:
-            self.check_for_unread_messages()
+        self.check_for_unread_messages()
 
-    def listen_messages(self) -> None:
+        # Check for users waiting the pack
+        user_in_last_stage = User.find_users_in_last_stage()
+        for user in user_in_last_stage:
+            self.create_sticker_pack(user)
+
+    def keep_running(self) -> None:
         """
-        Keeps listening for new messages.
+        Keeps running with self.run()
         :return:
         """
         while True:
             try:
-                self.check_for_unread_messages()
-                sleep(5)
+                self.run()
+                sleep(2)
             except TypeError:
-                print("------------------------")
-                print("---ERROR...RESTARTING---")
-                print("------------------------")
+                logging.critical("---ERROR...RESTARTING---")
+
+    def create_sticker_pack(self, user_info: tuple) -> bool:
+        """Create a sticker pack using StickerSet class."""
+        wa_chat_id = user_info[0]
+        package_name = user_info[1]
+        package_title = user_info[2]
+        tg_chat_id = user_info[3]
+
+        # Get stickers messages
+        stickers = self.list_user_unread_stickers(wa_chat_id)
+
+        # Upload stickers
+        uploaded_stickers = []
+        for sticker in stickers:
+            uploaded_stickers.append(self.upload_sticker_from_message(tg_chat_id, sticker))
+        if not uploaded_stickers:
+            return False
+
+        # Create sticker set
+        sticker_set = StickerSet(tg_chat_id)
+        sticker_set.create_new_sticker_set(package_name, package_title, uploaded_stickers[0])
+
+        # Populate sticker set
+        for uploaded_sticker in uploaded_stickers[1:]:
+            print(sticker_set.add_sticker_to_set(tg_chat_id, package_name, uploaded_sticker))
+
+        # Send confirmation
+        self._bot_actions.confirmation(wa_chat_id, package_name)
+        return True
 
     def check_for_unread_messages(self) -> None:
         """
@@ -66,18 +95,26 @@ class WhatsappBot:
             for message in msg_group.messages:
                 self.process_incoming_message(message)
 
-    def process_incoming_message(self, message: Message):
+    def process_incoming_message(self, message: Message) -> None:
         # Message properties: https://gist.github.com/hellmrf/6e06fc374bb43de0868fbb57c223aecd
         if message.type == 'chat':
             print(f"[{message.timestamp}]: {message.content}")
-            treat_msg = self.treat_message(message.chat_id, message.content)
-            self._driver.send_message_to_id(message.chat_id, treat_msg)
-        elif message.type == 'sticker':
-            pass
-            # sticker = message.save_media_buffer(True)
-            # image_base64 = self.convert_sticker_to_png_base64(sticker)
+            self.treat_message(message.chat_id, message.content)
+        elif User.get_stage(message.chat_id) == 0:
+            self.treat_message(message.chat_id, "a")
 
-    def treat_message(self, chat_id: str, message: str) -> str:
+
+    def list_user_unread_stickers(self, chat_id: str) -> List[Message]:
+        messages: List[Message] = self._driver.get_all_messages_in_chat(chat_id)
+        stickers = [message for message in messages if message.type == 'sticker']
+        return stickers
+
+    @staticmethod
+    def upload_sticker_from_message(tg_user_id: int, sticker_message: Message) -> str:
+        sticker = sticker_message.save_media_buffer(True)
+        return StickerSet.upload_sticker(tg_user_id, sticker)
+
+    def treat_message(self, chat_id: str, message: str) -> bool:
         return self._bot_actions.answer(chat_id, message)
 
     @staticmethod
@@ -97,20 +134,6 @@ class WhatsappBot:
 
     # TODO: remove that
     @staticmethod
-    def temp_response(msg: str) -> str:
-        if re.search(r'(oi|ola|olá|hi|hello)', msg, re.IGNORECASE):
-            return "Olá!! Tudo bem?"
-        elif 'te amo' in msg.lower():
-            return "Eu também amo você!"
-        elif 'fofinho' in msg.lower():
-            return "Você também é muito fofx!"
-        elif 'tchau' in msg.lower():
-            return "Que pena que você já vai :(. Tchauzinho. Bom conversar com você."
-        else:
-            return "Ehr... Bruh... Pi pi pi... Ainda não aprendi o que você disse..."
-
-    # TODO: remove that
-    @staticmethod
-    def temp_save_to_txt(base64_string: str) -> None:
-        with open("/home/helitonmrf/Projects/WhatsGram_Stickers/test/sticker.html", 'w') as fl:
+    def temp_save_to_txt(base64_string: str, suffix="") -> None:
+        with open(f"/home/helitonmrf/Projects/WhatsGram_Stickers/test/sticker{suffix}.html", 'w') as fl:
             fl.write(f"<img src='{base64_string}' />")
