@@ -462,11 +462,13 @@ class WhatsAPIDriver(object):
     # get_unread_messages_in_chat()
 
     def get_all_messages_in_chat(
-        self, chat, include_me=False, include_notifications=False
+        self, chat_id: str, include_me=False, include_notifications=False
     ):
         """
         Fetches messages in chat
 
+        :param chat_id: chat id
+        :type chat_id: str
         :param include_me: Include user's messages
         :type include_me: bool or None
         :param include_notifications: Include events happening on chat
@@ -475,11 +477,10 @@ class WhatsAPIDriver(object):
         :rtype: list[Message]
         """
         message_objs = self.wapi_functions.getAllMessagesInChat(
-            chat.id, include_me, include_notifications
+            chat_id, include_me, include_notifications
         )
 
-        for message in message_objs:
-            yield (factory_message(message, self))
+        return [factory_message(message, self) for message in message_objs]
 
     def get_all_message_ids_in_chat(
         self, chat, include_me=False, include_notifications=False
