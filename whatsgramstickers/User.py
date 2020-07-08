@@ -26,14 +26,6 @@ class User:
                 db.cursor.execute("INSERT INTO users (chat_id, stage) VALUES (%s, %s)", (self.chat_id, new_stage, ))
                 return db.cursor.rowcount > 0
 
-    def REMOVED_set_package_name(self, new_package_name: str) -> bool:
-        """
-        This function MAY NOT be used.
-        The name have to be generated with StickerSet.generate_package_name_by_title() instead.
-        """
-        # return self._update_field('package_name', new_package_name)
-        return False
-
     def set_package_title(self, new_package_title: str) -> bool:
         return self._update_field('package_title', new_package_title)
 
@@ -41,7 +33,7 @@ class User:
         return self._update_field('telegram_id', telegram_id)
 
     def _update_field(self, field: str, new_value) -> bool:
-        if field not in ['stage', 'package_name', 'package_title', 'telegram_id']:
+        if field not in ['stage', 'package_title', 'telegram_id']:
             # Just for integrity
             return False
         with DB() as db:

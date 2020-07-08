@@ -50,24 +50,6 @@ class BotActions:
         self._send_message(chat_id, self.BOT_MESSAGES['send_me_stickers'])
         return True
 
-    def REMOVED_read_package_name(self, chat_id: str, message: str) -> bool:
-        """
-        This function MAY NOT be used.
-        The name have to be generated with StickerSet.generate_package_name_by_title() instead.
-        """
-        # name = message.strip()
-        # if not StickerSet.validate_set_name(name):
-        #     self._send_message(chat_id, self.BOT_MESSAGES['package_name_error'])
-        #     return False
-        # user = User(chat_id)
-        # set_name_success = user.set_package_name(name+'_by_WhatsGramStickersBot')
-        # if not set_name_success:
-        #     return False
-        # user.set_stage(STAGES['WAITING_STICKERS'])
-        # self._send_message(chat_id, self.BOT_MESSAGES['send_me_stickers'])
-        # return True
-        return False
-
     def ask_for_telegram(self, chat_id: str) -> bool:
         text = self.BOT_MESSAGES['whats_your_telegram']
         self._send_message(chat_id, text)
