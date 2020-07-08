@@ -1,5 +1,3 @@
-import re
-import json
 from whatsgramstickers.webwhatsapi import WhatsAPIDriver
 from whatsgramstickers.db import DB
 from whatsgramstickers.User import User

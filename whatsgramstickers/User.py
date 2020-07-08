@@ -1,4 +1,3 @@
-# from whatsgramstickers.webwhatsapi import WhatsAPIDriver
 from whatsgramstickers.db import DB
 """
 CREATE TABLE users
