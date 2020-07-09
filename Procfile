@@ -1,1 +1,1 @@
-web: python3 whatsgramstickers/main.py
+worker: python3 whatsgramstickers/main.py
