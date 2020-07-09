@@ -16,8 +16,6 @@ from User import User
 class WhatsappBot:
 
     def __init__(self, auto_run=False, auto_long_run=False, headless=False):
-        # self._chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
-        # self._chromedriver = os.environ.get('CHROMEDRIVE_PATH')
         self._chromedriver = os.environ.get('CHROMEDRIVE_PATH', os.path.join(os.path.dirname(__file__), "chromedriver"))
         self._profile_path = os.path.join(os.path.dirname(__file__), "chromeprofile")
 
