@@ -16,8 +16,11 @@ from User import User
 class WhatsappBot:
 
     def __init__(self, auto_run=False, auto_long_run=False, headless=False):
-        self._chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
+        # self._chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
+        # self._chromedriver = os.environ.get('CHROMEDRIVE_PATH')
+        self._chromedriver = os.environ.get('CHROMEDRIVE_PATH', os.path.join(os.path.dirname(__file__), "chromedriver"))
         self._profile_path = os.path.join(os.path.dirname(__file__), "chromeprofile")
+
         self._headless = headless
         self._driver = WhatsAPIDriver(
             username="API",
@@ -25,7 +28,11 @@ class WhatsappBot:
             profile=self._profile_path,
             executable_path=self._chromedriver,
             headless=self._headless,
-            chrome_options=["user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"],
+            chrome_options=[
+                "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+                "--disable-dev-shm-usage",
+                "--no-sandbox",
+            ],
         )
         self._bot_actions = BotActions(self._driver)
 

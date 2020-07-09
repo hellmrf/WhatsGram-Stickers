@@ -1,3 +1,6 @@
-2020/07/08-23:23:51.409 ce8c Reusing MANIFEST /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2020/07/08-23:23:51.409 ce8c Recovering log #23
-2020/07/08-23:23:51.512 ce8c Reusing old log /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000023.log 
+2020/07/09-00:59:00.699 f43c Reusing MANIFEST /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2020/07/09-00:59:00.700 f43c Recovering log #23
+2020/07/09-00:59:00.830 f43c Reusing old log /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000023.log 
+2020/07/09-00:59:13.581 f4ce Level-0 table #28: started
+2020/07/09-00:59:13.669 f4ce Level-0 table #28: 1303878 bytes OK
+2020/07/09-00:59:13.678 f4ce Delete type=0 #23

@@ -247,6 +247,8 @@ class WhatsAPIDriver(object):
 
         elif self.client == "chrome":
             self._profile = webdriver.ChromeOptions()
+            if os.environ.get('GOOGLE_CHROME_BIN'):
+                self._profile.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
             if self._profile_path is not None:
                 self._profile.add_argument("user-data-dir=%s" % self._profile_path)
             if proxy is not None:

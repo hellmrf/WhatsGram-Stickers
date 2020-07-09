@@ -1,3 +1,10 @@
-2020/07/08-23:25:41.852 d104 Reusing MANIFEST /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2020/07/08-23:25:41.852 d104 Recovering log #23
-2020/07/08-23:25:41.951 d104 Reusing old log /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000023.log 
+2020/07/09-00:59:35.410 f55e Reusing MANIFEST /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2020/07/09-00:59:35.410 f55e Recovering log #27
+2020/07/09-00:59:35.411 f55e Reusing old log /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000027.log 
+2020/07/09-00:59:36.231 f58e Compacting 1@1 + 1@2 files
+2020/07/09-00:59:36.390 f58e Generated table #30@1: 48791 keys, 2232052 bytes
+2020/07/09-00:59:36.398 f58e Generated table #31@1: 2381 keys, 119305 bytes
+2020/07/09-00:59:36.398 f58e Compacted 1@1 + 1@2 files => 2351357 bytes
+2020/07/09-00:59:36.403 f58e compacted to: files[ 0 0 2 0 0 0 0 ]
+2020/07/09-00:59:36.403 f58e Delete type=2 #28
+2020/07/09-00:59:36.403 f58e Delete type=2 #25
