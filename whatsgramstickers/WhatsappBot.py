@@ -15,12 +15,18 @@ from User import User
 
 class WhatsappBot:
 
-    def __init__(self, auto_run=False, auto_long_run=False):
+    def __init__(self, auto_run=False, auto_long_run=False, headless=False):
         self._chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
         self._profile_path = os.path.join(os.path.dirname(__file__), "chromeprofile")
-        self._headless = False
-        self._driver = WhatsAPIDriver(username="API", client="chrome", profile=self._profile_path,
-                                      executable_path=self._chromedriver)
+        self._headless = headless
+        self._driver = WhatsAPIDriver(
+            username="API",
+            client="chrome",
+            profile=self._profile_path,
+            executable_path=self._chromedriver,
+            headless=self._headless,
+            chrome_options=["user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"],
+        )
         self._bot_actions = BotActions(self._driver)
 
         if auto_long_run:
@@ -48,12 +54,17 @@ class WhatsappBot:
         Keeps running with self.run()
         :return:
         """
+
         while True:
+            if not self._driver.is_logged_in():
+                self._driver.screenshot('scrsht.png')
+                self._driver.wait_for_login()
             try:
                 self.run()
                 sleep(2)
-            except TypeError:
-                logging.critical("---ERROR...RESTARTING---")
+            except TypeError as err:
+                logging.critical(err)
+                logging.critical("---RESTARTING---")
 
     def create_sticker_pack(self, user_info: tuple) -> bool:
         """Create a sticker pack using StickerSet class."""
@@ -63,13 +74,6 @@ class WhatsappBot:
 
         # Get stickers messages
         stickers = self.list_user_unread_stickers(wa_chat_id)
-
-        # Upload stickers
-        # uploaded_stickers = []
-        # for sticker in stickers:
-        #     uploaded_stickers.append(self.upload_sticker_from_message(tg_chat_id, sticker))
-        # if not uploaded_stickers:
-        #     return False
 
         # Create sticker set
         sticker_set = StickerSet(tg_chat_id)
@@ -100,7 +104,7 @@ class WhatsappBot:
     def process_incoming_message(self, message: Message) -> None:
         # Message properties: https://gist.github.com/hellmrf/6e06fc374bb43de0868fbb57c223aecd
         if message.type == 'chat':
-            print(f"[{message.timestamp}]: {message.content}")
+            print(f"[{message.chat_id} {message.timestamp}]: {message.content}")
             self.treat_message(message.chat_id, message.content)
         elif User.get_stage(message.chat_id) == 0:
             self.treat_message(message.chat_id, "a")

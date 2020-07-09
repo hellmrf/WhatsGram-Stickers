@@ -1,12 +1,3 @@
-2020/07/08-21:08:58.053 8f36 Reusing MANIFEST /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2020/07/08-21:08:58.054 8f36 Recovering log #19
-2020/07/08-21:08:58.171 8f36 Reusing old log /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000019.log 
-2020/07/08-21:12:47.646 9171 Level-0 table #24: started
-2020/07/08-21:12:47.700 9171 Level-0 table #24: 1333603 bytes OK
-2020/07/08-21:12:47.708 9171 Delete type=0 #19
-2020/07/08-21:15:06.272 9171 Compacting 1@1 + 1@2 files
-2020/07/08-21:15:06.431 9171 Generated table #25@1: 45767 keys, 2098900 bytes
-2020/07/08-21:15:06.431 9171 Compacted 1@1 + 1@2 files => 2098900 bytes
-2020/07/08-21:15:06.436 9171 compacted to: files[ 0 0 1 0 0 0 0 ]
-2020/07/08-21:15:06.436 9171 Delete type=2 #24
-2020/07/08-21:15:06.436 9171 Delete type=2 #21
+2020/07/08-23:23:51.409 ce8c Reusing MANIFEST /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2020/07/08-23:23:51.409 ce8c Recovering log #23
+2020/07/08-23:23:51.512 ce8c Reusing old log /home/helitonmrf/Projects/WhatsGram_Stickers/whatsgramstickers/chromeprofile/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000023.log 
