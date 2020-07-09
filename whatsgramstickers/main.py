@@ -11,7 +11,7 @@ class WhatsGramSticker:
         if run_telegram:
             self._telegram = TelegramBot()
         if run_whatsapp:
-            self._whatsapp = WhatsappBot(headless=False)
+            self._whatsapp = WhatsappBot(headless=True)
             self._whatsapp.keep_running()
 
 
