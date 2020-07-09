@@ -9,3 +9,4 @@ python-telegram-bot>=12.8
 requests>=2.24.0
 psycopg2-binary>=2.8.5
 python-axolotl>=0.2.3
+python-resize-image>=1.1.19
