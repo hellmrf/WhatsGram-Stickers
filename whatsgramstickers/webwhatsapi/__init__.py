@@ -185,6 +185,7 @@ class WhatsAPIDriver(object):
         extra_params=None,
         chrome_options=None,
         executable_path=None,
+        heroku=False,
     ):
         """Initialises the webdriver"""
 
@@ -247,22 +248,28 @@ class WhatsAPIDriver(object):
 
         elif self.client == "chrome":
             self._profile = webdriver.ChromeOptions()
+            if os.environ.get('GOOGLE_CHROME_BIN'):
+                self._profile.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
             if self._profile_path is not None:
                 self._profile.add_argument("user-data-dir=%s" % self._profile_path)
             if proxy is not None:
                 self._profile.add_argument("--proxy-server=%s" % proxy)
-            if headless:
+            if headless or heroku:
                 self._profile.add_argument("headless")
+                self._profile.add_argument("--headless")
             if chrome_options is not None:
                 for option in chrome_options:
                     self._profile.add_argument(option)
+            if heroku:
+                self._profile.add_argument("--disable-dev-shm-usage")
+                self._profile.add_argument("--no-sandbox")
+                self._profile.add_argument("--disable-gpu")
             self.logger.info("Starting webdriver")
             if executable_path is not None:
                 executable_path = os.path.abspath(executable_path)
                 self.driver = webdriver.Chrome(executable_path, chrome_options=self._profile, **extra_params)
             else:
                 self.driver = webdriver.Chrome(chrome_options=self._profile, **extra_params)
-
 
         elif client == "remote":
             if self._profile_path is not None:

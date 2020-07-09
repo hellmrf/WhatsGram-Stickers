@@ -1,5 +1,4 @@
-# from whatsgramstickers.webwhatsapi import WhatsAPIDriver
-from whatsgramstickers.db import DB
+from db import DB
 """
 CREATE TABLE users
 (
@@ -27,9 +26,6 @@ class User:
                 db.cursor.execute("INSERT INTO users (chat_id, stage) VALUES (%s, %s)", (self.chat_id, new_stage, ))
                 return db.cursor.rowcount > 0
 
-    def set_package_name(self, new_package_name: str) -> bool:
-        return self._update_field('package_name', new_package_name)
-
     def set_package_title(self, new_package_title: str) -> bool:
         return self._update_field('package_title', new_package_title)
 
@@ -37,7 +33,7 @@ class User:
         return self._update_field('telegram_id', telegram_id)
 
     def _update_field(self, field: str, new_value) -> bool:
-        if field not in ['stage', 'package_name', 'package_title', 'telegram_id']:
+        if field not in ['stage', 'package_title', 'telegram_id']:
             # Just for integrity
             return False
         with DB() as db:
@@ -86,10 +82,9 @@ class User:
     @staticmethod
     def find_users_in_last_stage() -> list:
         with DB() as db:
-            db.cursor.execute("SELECT chat_id, package_name, package_title, telegram_id FROM users "
+            db.cursor.execute("SELECT chat_id, package_title, telegram_id FROM users "
                               "WHERE stage = 6 "
                               "AND package_title != '' "
-                              "AND package_name  != '' "
                               "AND telegram_id != 0")
             return list(db.cursor.fetchall())
 

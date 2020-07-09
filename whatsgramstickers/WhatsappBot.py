@@ -6,21 +6,31 @@ from time import sleep
 from typing import List
 import logging
 
-from whatsgramstickers.webwhatsapi import WhatsAPIDriver
-from whatsgramstickers.webwhatsapi.objects.message import Message
-from whatsgramstickers.BotActions import BotActions
-from whatsgramstickers.StickerSet import StickerSet
-from whatsgramstickers.User import User
+from webwhatsapi import WhatsAPIDriver
+from webwhatsapi.objects.message import Message
+from BotActions import BotActions
+from StickerSet import StickerSet
+from User import User
 
 
 class WhatsappBot:
 
-    def __init__(self, auto_run=False, auto_long_run=False):
-        self._chromedriver = os.path.join(os.path.dirname(__file__), "chromedriver")
+    def __init__(self, auto_run=False, auto_long_run=False, headless=False):
+        self._chromedriver = os.environ.get('CHROMEDRIVE_PATH', os.path.join(os.path.dirname(__file__), "chromedriver"))
         self._profile_path = os.path.join(os.path.dirname(__file__), "chromeprofile")
-        self._headless = False
-        self._driver = WhatsAPIDriver(username="API", client="chrome", profile=self._profile_path,
-                                      executable_path=self._chromedriver)
+
+        self._headless = headless
+        self._driver = WhatsAPIDriver(
+            username="API",
+            client="chrome",
+            profile=self._profile_path,
+            executable_path=self._chromedriver,
+            headless=self._headless,
+            chrome_options=[
+                "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+            ],
+            heroku=True
+        )
         self._bot_actions = BotActions(self._driver)
 
         if auto_long_run:
@@ -48,40 +58,40 @@ class WhatsappBot:
         Keeps running with self.run()
         :return:
         """
+
         while True:
+            if not self._driver.is_logged_in():
+                self._driver.screenshot('scrsht.png')
+                self._driver.wait_for_login()
             try:
                 self.run()
                 sleep(2)
-            except TypeError:
-                logging.critical("---ERROR...RESTARTING---")
+            except TypeError as err:
+                logging.critical(err)
+                logging.critical("---RESTARTING---")
 
     def create_sticker_pack(self, user_info: tuple) -> bool:
         """Create a sticker pack using StickerSet class."""
         wa_chat_id = user_info[0]
-        package_name = user_info[1]
-        package_title = user_info[2]
-        tg_chat_id = user_info[3]
+        package_title = user_info[1]
+        tg_chat_id = user_info[2]
 
         # Get stickers messages
         stickers = self.list_user_unread_stickers(wa_chat_id)
 
-        # Upload stickers
-        uploaded_stickers = []
-        for sticker in stickers:
-            uploaded_stickers.append(self.upload_sticker_from_message(tg_chat_id, sticker))
-        if not uploaded_stickers:
-            return False
-
         # Create sticker set
         sticker_set = StickerSet(tg_chat_id)
-        sticker_set.create_new_sticker_set(package_name, package_title, uploaded_stickers[0])
+        name = sticker_set.create_new_sticker_set(package_title, stickers[0].save_media_buffer(True))
+
+        if not name:
+            return False
 
         # Populate sticker set
-        for uploaded_sticker in uploaded_stickers[1:]:
-            print(sticker_set.add_sticker_to_set(tg_chat_id, package_name, uploaded_sticker))
+        for sticker in stickers[1:]:
+            print(sticker_set.add_sticker_to_set(tg_chat_id, name, sticker.save_media_buffer(True)))
 
         # Send confirmation
-        self._bot_actions.confirmation(wa_chat_id, package_name)
+        self._bot_actions.confirmation(wa_chat_id, name)
         return True
 
     def check_for_unread_messages(self) -> None:
@@ -98,11 +108,10 @@ class WhatsappBot:
     def process_incoming_message(self, message: Message) -> None:
         # Message properties: https://gist.github.com/hellmrf/6e06fc374bb43de0868fbb57c223aecd
         if message.type == 'chat':
-            print(f"[{message.timestamp}]: {message.content}")
+            print(f"[{message.chat_id} {message.timestamp}]: {message.content}")
             self.treat_message(message.chat_id, message.content)
         elif User.get_stage(message.chat_id) == 0:
             self.treat_message(message.chat_id, "a")
-
 
     def list_user_unread_stickers(self, chat_id: str) -> List[Message]:
         messages: List[Message] = self._driver.get_all_messages_in_chat(chat_id)
