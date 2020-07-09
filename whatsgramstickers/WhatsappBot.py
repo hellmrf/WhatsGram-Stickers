@@ -6,11 +6,11 @@ from time import sleep
 from typing import List
 import logging
 
-from whatsgramstickers.webwhatsapi import WhatsAPIDriver
-from whatsgramstickers.webwhatsapi.objects.message import Message
-from whatsgramstickers.BotActions import BotActions
-from whatsgramstickers.StickerSet import StickerSet
-from whatsgramstickers.User import User
+from webwhatsapi import WhatsAPIDriver
+from webwhatsapi.objects.message import Message
+from BotActions import BotActions
+from StickerSet import StickerSet
+from User import User
 
 
 class WhatsappBot:
@@ -65,22 +65,22 @@ class WhatsappBot:
         stickers = self.list_user_unread_stickers(wa_chat_id)
 
         # Upload stickers
-        uploaded_stickers = []
-        for sticker in stickers:
-            uploaded_stickers.append(self.upload_sticker_from_message(tg_chat_id, sticker))
-        if not uploaded_stickers:
-            return False
+        # uploaded_stickers = []
+        # for sticker in stickers:
+        #     uploaded_stickers.append(self.upload_sticker_from_message(tg_chat_id, sticker))
+        # if not uploaded_stickers:
+        #     return False
 
         # Create sticker set
         sticker_set = StickerSet(tg_chat_id)
-        name = sticker_set.create_new_sticker_set(package_title, uploaded_stickers[0])
+        name = sticker_set.create_new_sticker_set(package_title, stickers[0].save_media_buffer(True))
 
         if not name:
             return False
 
         # Populate sticker set
-        for uploaded_sticker in uploaded_stickers[1:]:
-            print(sticker_set.add_sticker_to_set(tg_chat_id, name, uploaded_sticker))
+        for sticker in stickers[1:]:
+            print(sticker_set.add_sticker_to_set(tg_chat_id, name, sticker.save_media_buffer(True)))
 
         # Send confirmation
         self._bot_actions.confirmation(wa_chat_id, name)

@@ -1,6 +1,6 @@
 from telegram.utils import request
-from whatsgramstickers.TelegramBot import TelegramBot
-from whatsgramstickers.WhatsappBot import WhatsappBot
+from TelegramBot import TelegramBot
+from WhatsappBot import WhatsappBot
 
 request.CON_POOL_SIZE = 10
 

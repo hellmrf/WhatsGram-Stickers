@@ -1,11 +1,11 @@
 import os
 import re
-import logging
 import requests
 from io import BytesIO
 from typing import Union
+import logging
 
-from whatsgramstickers.TelegramBot import TelegramBot
+from TelegramBot import TelegramBot
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "credentials", "TelegramApiKey.txt"), 'r') as fl:
     API_KEY = fl.readline()
@@ -18,7 +18,7 @@ class StickerSet:
     def __init__(self, user_id: int):
         self.user_id = user_id
 
-    def create_new_sticker_set(self, set_title: str, first_sticker: str, emojis: str = DEFAULT_EMOJI, set_name: str = None) -> Union[str, bool]:
+    def create_new_sticker_set(self, set_title: str, first_sticker: Union[str, BytesIO], emojis: str = DEFAULT_EMOJI, set_name: str = None) -> Union[str, bool]:
         """ Create a new sticker set and returns its name or False """
         if not self.validate_set_title(set_title):
             return False
@@ -27,14 +27,24 @@ class StickerSet:
             set_name = self.generate_package_name_by_title(set_title)
 
         url = f"https://api.telegram.org/bot{API_KEY}/createNewStickerSet"
-        data = {
-            'user_id': self.user_id,
-            'name': set_name,
-            'title': set_title,
-            'png_sticker': first_sticker,
-            u'emojis': u'😍'
-        }
-        response = requests.post(url, data=data)
+
+        if isinstance(first_sticker, str):
+            data = {
+                'user_id': self.user_id,
+                'name': set_name,
+                'title': set_title,
+                'png_sticker': first_sticker,
+                u'emojis': u'😍'
+            }
+            response = requests.post(url, data=data)
+        else:
+            data = {
+                'user_id': self.user_id,
+                'name': set_name,
+                'title': set_title,
+                u'emojis': u'😍'
+            }
+            response = requests.post(url, data=data, files={'png_sticker': first_sticker})
         if response.status_code == 200:
             return set_name
         else:
@@ -45,6 +55,7 @@ class StickerSet:
 
     @staticmethod
     def upload_sticker(user_id: int, sticker: BytesIO) -> str:
+        logging.warning("Uploading sticker before adding to a set is not necessary. Use add_sticker_to_set() directly.")
         url = f"https://api.telegram.org/bot{API_KEY}/uploadStickerFile"
         response = requests.post(url, data={'user_id': user_id}, files={'png_sticker': sticker})
         if response.status_code != 200:
@@ -56,15 +67,24 @@ class StickerSet:
         return data['result']['file_id']
 
     @staticmethod
-    def add_sticker_to_set(user_id: int, set_name: str, sticker: str, emojis: str = DEFAULT_EMOJI) -> bool:
+    def add_sticker_to_set(user_id: int, set_name: str, sticker: Union[str, BytesIO], emojis: str = DEFAULT_EMOJI) -> bool:
         url = f"https://api.telegram.org/bot{API_KEY}/addStickerToSet"
-        data = {
-            'user_id': user_id,
-            'name': set_name,
-            'png_sticker': sticker,
-            u'emojis': u'😀'
-        }
-        response = requests.post(url, data=data)
+        if isinstance(sticker, str):
+            data = {
+                'user_id': user_id,
+                'name': set_name,
+                'png_sticker': sticker,
+                u'emojis': u'😀'
+            }
+            response = requests.post(url, data=data)
+        else:
+            data = {
+                'user_id': user_id,
+                'name': set_name,
+                u'emojis': u'😀'
+            }
+            response = requests.post(url, data=data, files={'png_sticker': sticker})
+
         if response.status_code == 200:
             return True
         else:

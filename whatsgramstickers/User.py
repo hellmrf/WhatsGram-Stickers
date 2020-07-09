@@ -1,4 +1,4 @@
-from whatsgramstickers.db import DB
+from db import DB
 """
 CREATE TABLE users
 (

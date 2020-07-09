@@ -1,10 +1,10 @@
 import logging
-from whatsgramstickers.webwhatsapi import WhatsAPIDriver
-from whatsgramstickers.db import DB
-from whatsgramstickers.User import User
-from whatsgramstickers.StickerSet import StickerSet
-from whatsgramstickers.BotMessages import WHATSAPP_MESSAGES
-from whatsgramstickers.Constants import STAGES
+from webwhatsapi import WhatsAPIDriver
+from db import DB
+from User import User
+from StickerSet import StickerSet
+from BotMessages import WHATSAPP_MESSAGES
+from Constants import STAGES
 
 
 class BotActions:

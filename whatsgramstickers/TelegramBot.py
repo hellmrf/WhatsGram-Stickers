@@ -2,10 +2,10 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 import os
 import re
-from whatsgramstickers.Constants import STAGES
-from whatsgramstickers.BotMessages import TELEGRAM_MESSAGES
+from Constants import STAGES
+from BotMessages import TELEGRAM_MESSAGES
 
-from whatsgramstickers.User import User
+from User import User
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "credentials", "TelegramApiKey.txt"), 'r') as fl:
     API_KEY = fl.readline()
