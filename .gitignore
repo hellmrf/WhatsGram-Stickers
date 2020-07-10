@@ -1,6 +1,12 @@
 # PyCharm stuff
 .idea/
 
+
+# Sensitive data
+credentials/
+chromeprofile
+chromeprofile/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -130,6 +136,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+<<<<<<< HEAD
 
 # Sensitive data
 credentials/
+=======
+>>>>>>> e0d3fff... Removing chromeprofile

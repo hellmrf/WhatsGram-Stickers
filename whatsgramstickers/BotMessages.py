@@ -8,6 +8,7 @@ WHATSAPP_MESSAGES = {
   "done": "Yupi! Seu pacote de figurinhas está saindo do forno!!! Acesse http://t.me/addstickers/{} para encontrá-lo!\n\nSe quiser gerenciá-lo, você pode encontrar o bot @Stickers no Telegram. Ele pode te ajudar a ver e editar seus pacotes!\n\nSe quiser criar mais pacotes, já sabe: envia um ```/start```",
   "unknown_error": "Ops... Encontrei um erro que não consigo resolver sozinho. Como as coisas na computação nem sempre seguem a lógica, tente enviar um ```/start``` novamente dentro de alguns minutos. Se isso não funcionar, entre em contato com meu pai humano no Telegram @helitonmrf (https://t.me/helitonmrf). ",
   "invalid_package_title": "Opa, esse nome para o pacote não é válido. Use no máximo 40 caracteres.",
+  "wait_a_little_more": "Estamos criando seu pacote de Stickers. Assim que ele estiver pronto, vou te enviar o link por aqui. Pode aguardar mais um pouquinho?",
 }
 
 TELEGRAM_MESSAGES = {

@@ -14,7 +14,7 @@ class BotActions:
         self._driver = driver
         self._db = DB()
 
-    def answer(self, chat_id: str, message: str) -> bool:
+    def answer(self, chat_id: str, message: str, queued=False) -> bool:
         message_lower = message.lower()
         user = User(chat_id)
         stage = User.get_stage(chat_id)
@@ -34,8 +34,14 @@ class BotActions:
             user.set_stage(STAGES['WAITING_STICKERS'])
             return True
             # return self.read_package_name(chat_id, message)
+        elif queued:
+            return self.wait_a_little_more(chat_id)
         else:
             return self.welcome(chat_id)
+
+    def wait_a_little_more(self, chat_id: str) -> bool:
+        self._send_message(chat_id, self.BOT_MESSAGES['wait_a_little_more'])
+        return True
 
     def read_package_title(self, chat_id: str, message: str) -> bool:
         # TODO read package title
@@ -72,11 +78,12 @@ class BotActions:
 
     def confirmation(self, chat_id: str, package_name: str) -> None:
         text = self.BOT_MESSAGES['done'].format(package_name)
-        self._clean_user(chat_id)
+        self._clean_user(chat_id, delete_chat=False)
         self._send_message(chat_id, text)
 
-    def _clean_user(self, chat_id: str) -> bool:
-        self._driver.delete_chat(chat_id)
+    def _clean_user(self, chat_id: str, delete_chat=True) -> bool:
+        if delete_chat:
+            self._driver.delete_chat(chat_id)
         User.clean_user(chat_id)
         return True
 

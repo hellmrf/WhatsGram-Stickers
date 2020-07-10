@@ -5,12 +5,15 @@ from PIL import Image
 from time import sleep
 from typing import List
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 from webwhatsapi import WhatsAPIDriver
 from webwhatsapi.objects.message import Message
 from BotActions import BotActions
 from StickerSet import StickerSet
 from User import User
+
+logging.basicConfig(level=logging.INFO)
 
 
 class WhatsappBot:
@@ -29,9 +32,12 @@ class WhatsappBot:
             chrome_options=[
                 "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
             ],
-            heroku=True
+            heroku=self._headless
         )
         self._bot_actions = BotActions(self._driver)
+
+        self._thread_pool = ThreadPoolExecutor(max_workers=2)
+        self._threaded_users = []
 
         if auto_long_run:
             self.keep_running()
@@ -51,7 +57,12 @@ class WhatsappBot:
         # Check for users waiting the pack
         user_in_last_stage = User.find_users_in_last_stage()
         for user in user_in_last_stage:
-            self.create_sticker_pack(user)
+            if user[0] not in self._threaded_users:
+                self._thread_pool.submit(self.create_sticker_pack, user)
+                self._threaded_users.append(user[0])
+                logging.info(f"{user[0]} added to queue.")
+            else:
+                logging.info(f"{user[0]} already in queue.")
 
     def keep_running(self) -> None:
         """
@@ -76,6 +87,8 @@ class WhatsappBot:
         package_title = user_info[1]
         tg_chat_id = user_info[2]
 
+        logging.info(f"Running for {wa_chat_id}")
+
         # Get stickers messages
         stickers = self.list_user_unread_stickers(wa_chat_id)
 
@@ -84,14 +97,23 @@ class WhatsappBot:
         name = sticker_set.create_new_sticker_set(package_title, stickers[0].save_media_buffer(True))
 
         if not name:
+            logging.error(f"Can't create {wa_chat_id} pack: name = {name}")
             return False
 
         # Populate sticker set
         for sticker in stickers[1:]:
-            print(sticker_set.add_sticker_to_set(tg_chat_id, name, sticker.save_media_buffer(True)))
+            stts = sticker_set.add_sticker_to_set(tg_chat_id, name, sticker.save_media_buffer(True))
+            logging.info(f"Added a sticker to {name}: {stts}")
 
         # Send confirmation
         self._bot_actions.confirmation(wa_chat_id, name)
+
+        logging.info(f"Finished {wa_chat_id}")
+
+        # Remove user from threading
+        if wa_chat_id in self._threaded_users:
+            self._threaded_users.remove(wa_chat_id)
+
         return True
 
     def check_for_unread_messages(self) -> None:
@@ -109,9 +131,10 @@ class WhatsappBot:
         # Message properties: https://gist.github.com/hellmrf/6e06fc374bb43de0868fbb57c223aecd
         if message.type == 'chat':
             print(f"[{message.chat_id} {message.timestamp}]: {message.content}")
-            self.treat_message(message.chat_id, message.content)
+            user_is_threaded = message.chat_id in self._threaded_users
+            self.treat_message(message.chat_id, message.content, queued=user_is_threaded)
         elif User.get_stage(message.chat_id) == 0:
-            self.treat_message(message.chat_id, "a")
+            self.treat_message(message.chat_id, "Hello")
 
     def list_user_unread_stickers(self, chat_id: str) -> List[Message]:
         messages: List[Message] = self._driver.get_all_messages_in_chat(chat_id)
@@ -123,8 +146,8 @@ class WhatsappBot:
         sticker = sticker_message.save_media_buffer(True)
         return StickerSet.upload_sticker(tg_user_id, sticker)
 
-    def treat_message(self, chat_id: str, message: str) -> bool:
-        return self._bot_actions.answer(chat_id, message)
+    def treat_message(self, chat_id: str, message: str, queued=False) -> bool:
+        return self._bot_actions.answer(chat_id, message, queued=queued)
 
     @staticmethod
     def convert_sticker_to_png_base64(sticker: BytesIO) -> str:

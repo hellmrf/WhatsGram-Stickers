@@ -1,5 +1,6 @@
-# Comment the following line to run migrations
-exit()
+"""Migrates the database.
+Make sure you have the correct /credentials/database.ini
+"""
 
 from db import DB
 
