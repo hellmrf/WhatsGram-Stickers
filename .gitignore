@@ -4,6 +4,7 @@
 
 # Sensitive data
 credentials/
+chromeprofile
 chromeprofile/*
 
 # Byte-compiled / optimized / DLL files
