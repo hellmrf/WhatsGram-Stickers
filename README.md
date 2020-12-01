@@ -10,7 +10,7 @@
   <p align="center">
     Bot that easily converts WhatsApp stickers to Telegram.
     <br />
-    <a href="https://wa.me/553171352054?text=Hi"><strong>Try it »</strong></a>
+    <a href="#"><strong>Try it »</strong> (not running anymore 🙁)</a>
     <br />
     <br />
     <a href="https://github.com/hellmrf/WhatsGram-Stickers/issues">Report Bug</a>
