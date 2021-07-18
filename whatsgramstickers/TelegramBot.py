@@ -43,7 +43,7 @@ class TelegramBot:
         # Get the dispatcher to register handlers
         dp = updater.dispatcher
 
-        # Register handlers
+        # Register handlers.  
         dp.add_handler(CommandHandler("start", self.start))
         dp.add_handler(CommandHandler("help", self.help_command))
         dp.add_handler(MessageHandler(Filters.text, self.receive_code))
